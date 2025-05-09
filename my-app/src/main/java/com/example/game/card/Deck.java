@@ -17,9 +17,38 @@ public class Deck {
     }
     
     /**
-     * 初始化牌組，隨機生成30張卡牌
+     * 初始化牌組，從卡牌圖鑑中選擇卡牌
      */
     public void initialize() {
+        // 從卡牌圖鑑中獲取所有可用卡牌
+        List<Minion> allMinions = CardLibrary.getAllMinions();
+        List<SpellCard> allSpells = CardLibrary.getAllSpells();
+        
+        if (allMinions.isEmpty() && allSpells.isEmpty()) {
+            System.out.println("卡牌圖鑑尚未初始化，使用隨機生成的卡牌");
+            initializeRandom();
+            return;
+        }
+        
+        // 從卡牌圖鑑中選擇20張隨從卡
+        int minionCount = Math.min(20, allMinions.size());
+        for (int i = 0; i < minionCount; i++) {
+            cards.add(copyCard(allMinions.get(i % allMinions.size())));
+        }
+        
+        // 從卡牌圖鑑中選擇10張法術卡
+        int spellCount = Math.min(10, allSpells.size());
+        for (int i = 0; i < spellCount; i++) {
+            cards.add(copyCard(allSpells.get(i % allSpells.size())));
+        }
+        
+        System.out.println("牌組初始化完成，共有 " + cards.size() + " 張卡牌");
+    }
+    
+    /**
+     * 初始化隨機牌組，用於卡牌圖鑑尚未初始化的情況
+     */
+    private void initializeRandom() {
         // 在這裡，我們簡單地生成一些隨機卡牌
         // 實際遊戲中，牌組應該是預設的或由玩家構建的
         
@@ -91,7 +120,41 @@ public class Deck {
             cards.add(spell);
         }
         
-        System.out.println("牌組初始化完成，共有 " + cards.size() + " 張卡牌");
+        System.out.println("牌組隨機初始化完成，共有 " + cards.size() + " 張卡牌");
+    }
+    
+    /**
+     * 複製卡牌，確保每張卡牌是獨立的實例
+     */
+    private Card copyCard(Card original) {
+        if (original instanceof Minion) {
+            Minion originalMinion = (Minion) original;
+            Minion copy = new Minion(
+                    originalMinion.getName(),
+                    originalMinion.getManaCost(),
+                    originalMinion.getDescription(),
+                    originalMinion.getRarity(),
+                    originalMinion.getAttack(),
+                    originalMinion.getHealth()
+            );
+            
+            copy.setTaunt(originalMinion.hasTaunt());
+            copy.setDivineShield(originalMinion.hasDivineShield());
+            copy.setCharge(originalMinion.hasCharge());
+            
+            return copy;
+        } else if (original instanceof SpellCard) {
+            SpellCard originalSpell = (SpellCard) original;
+            return new SpellCard(
+                    originalSpell.getName(),
+                    originalSpell.getManaCost(),
+                    originalSpell.getDescription(),
+                    originalSpell.getRarity(),
+                    originalSpell.getSpellType()
+            );
+        }
+        
+        return null;
     }
     
     /**

@@ -118,6 +118,8 @@ public class CardLibrary {
             System.out.println("1. 瀏覽所有隨從卡");
             System.out.println("2. 瀏覽所有法術卡");
             System.out.println("3. 搜尋卡牌");
+            System.out.println("4. 查看場上隨從詳情");
+            System.out.println("5. 查看玩家手牌");
             System.out.println("0. 返回");
             System.out.print("請選擇: ");
             
@@ -135,6 +137,12 @@ public class CardLibrary {
                     break;
                 case 3:
                     searchCard(scanner);
+                    break;
+                case 4:
+                    showBattlefieldMinions();
+                    break;
+                case 5:
+                    showPlayerHands();
                     break;
                 default:
                     System.out.println("無效的選擇!");
@@ -263,6 +271,109 @@ public class CardLibrary {
     }
     
     /**
+     * 查看場上隨從詳情
+     */
+    private static void showBattlefieldMinions() {
+        Scanner scanner = new Scanner(System.in);
+        
+        // 獲取當前遊戲雙方玩家
+        com.example.game.player.Player player1 = com.example.game.GameEngine.getPlayer1();
+        com.example.game.player.Player player2 = com.example.game.GameEngine.getPlayer2();
+        
+        if (player1 == null || player2 == null) {
+            System.out.println("遊戲尚未開始或無法獲取玩家信息");
+            return;
+        }
+        
+        while (true) {
+            System.out.println("\n======= 場上隨從詳情 =======");
+            System.out.println("1. 查看 " + player1.getName() + " 的場上隨從");
+            System.out.println("2. 查看 " + player2.getName() + " 的場上隨從");
+            System.out.println("0. 返回");
+            System.out.print("請選擇: ");
+            
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // 清除輸入緩衝
+            
+            if (choice == 0) {
+                return;
+            } else if (choice == 1) {
+                showPlayerMinions(player1);
+            } else if (choice == 2) {
+                showPlayerMinions(player2);
+            } else {
+                System.out.println("無效的選擇!");
+            }
+        }
+    }
+    
+    /**
+     * 顯示玩家場上隨從的詳細信息
+     */
+    private static void showPlayerMinions(com.example.game.player.Player player) {
+        Scanner scanner = new Scanner(System.in);
+        List<Minion> minions = player.getMinionsOnBoard();
+        
+        if (minions.isEmpty()) {
+            System.out.println(player.getName() + " 的場上沒有隨從");
+            System.out.println("按Enter返回...");
+            scanner.nextLine();
+            return;
+        }
+        
+        while (true) {
+            System.out.println("\n" + player.getName() + " 的場上隨從:");
+            for (int i = 0; i < minions.size(); i++) {
+                Minion minion = minions.get(i);
+                System.out.printf("%2d. %-15s [攻擊力:%d, 生命值:%d/%d] %s\n", 
+                        i+1, minion.getName(), minion.getAttack(), 
+                        minion.getHealth(), minion.getHealth(), 
+                        getSpecialEffects(minion));
+            }
+            
+            System.out.println("\n輸入隨從編號查看詳情，或輸入0返回: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // 清除輸入緩衝
+            
+            if (choice == 0) {
+                return;
+            } else if (choice > 0 && choice <= minions.size()) {
+                minions.get(choice-1).displayCardDetails();
+                
+                // 查看完後暫停一下
+                System.out.println("按Enter繼續...");
+                scanner.nextLine();
+            } else {
+                System.out.println("無效的選擇!");
+            }
+        }
+    }
+    
+    /**
+     * 獲取隨從的特殊效果描述
+     */
+    private static String getSpecialEffects(Minion minion) {
+        StringBuilder effects = new StringBuilder();
+        
+        if (minion.hasTaunt()) {
+            effects.append("嘲諷 ");
+        }
+        if (minion.hasDivineShield()) {
+            effects.append("聖盾 ");
+        }
+        if (minion.hasCharge()) {
+            effects.append("衝鋒 ");
+        }
+        if (minion.canAttack()) {
+            effects.append("可攻擊 ");
+        } else {
+            effects.append("已消耗 ");
+        }
+        
+        return effects.toString().trim();
+    }
+    
+    /**
      * 根據稀有度返回顯示符號
      */
     private static String getRaritySymbol(Rarity rarity) {
@@ -299,5 +410,94 @@ public class CardLibrary {
      */
     public static List<SpellCard> getAllSpells() {
         return allSpells;
+    }
+    
+    /**
+     * 查看玩家手牌
+     */
+    private static void showPlayerHands() {
+        Scanner scanner = new Scanner(System.in);
+        
+        // 獲取當前遊戲中的玩家
+        com.example.game.player.Player player1 = com.example.game.GameEngine.getPlayer1();
+        com.example.game.player.Player player2 = com.example.game.GameEngine.getPlayer2();
+        
+        if (player1 == null || player2 == null) {
+            System.out.println("遊戲尚未開始或無法獲取玩家信息");
+            return;
+        }
+        
+        while (true) {
+            System.out.println("\n======= 玩家手牌 =======");
+            
+            // 顯示雙方玩家選項
+            System.out.println("1. 查看 " + player1.getName() + " 的手牌");
+            System.out.println("2. 查看 " + player2.getName() + " 的手牌");
+            System.out.println("0. 返回");
+            System.out.print("請選擇: ");
+            
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // 清除輸入緩衝
+            
+            if (choice == 0) {
+                return;
+            } else if (choice == 1) {
+                showPlayerCards(player1);
+            } else if (choice == 2) {
+                showPlayerCards(player2);
+            } else {
+                System.out.println("無效的選擇!");
+            }
+        }
+    }
+    
+    /**
+     * 顯示玩家手牌的詳細信息
+     */
+    private static void showPlayerCards(com.example.game.player.Player player) {
+        Scanner scanner = new Scanner(System.in);
+        List<Card> cards = player.getHand();
+        
+        if (cards.isEmpty()) {
+            System.out.println(player.getName() + " 的手牌為空");
+            System.out.println("按Enter返回...");
+            scanner.nextLine();
+            return;
+        }
+        
+        while (true) {
+            System.out.println("\n" + player.getName() + " 的手牌:");
+            for (int i = 0; i < cards.size(); i++) {
+                Card card = cards.get(i);
+                if (card instanceof Minion) {
+                    Minion minion = (Minion) card;
+                    System.out.printf("%2d. %-15s [費用:%d 攻擊力:%d 生命值:%d] %s\n", 
+                            i+1, minion.getName(), minion.getManaCost(), 
+                            minion.getAttack(), minion.getHealth(), 
+                            getRaritySymbol(minion.getRarity()));
+                } else if (card instanceof SpellCard) {
+                    SpellCard spell = (SpellCard) card;
+                    System.out.printf("%2d. %-15s [費用:%d] (法術) %s\n", 
+                            i+1, spell.getName(), spell.getManaCost(), 
+                            getRaritySymbol(spell.getRarity()));
+                }
+            }
+            
+            System.out.println("\n輸入卡牌編號查看詳情，或輸入0返回: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // 清除輸入緩衝
+            
+            if (choice == 0) {
+                return;
+            } else if (choice > 0 && choice <= cards.size()) {
+                cards.get(choice-1).displayCardDetails();
+                
+                // 查看完後暫停一下
+                System.out.println("按Enter繼續...");
+                scanner.nextLine();
+            } else {
+                System.out.println("無效的選擇!");
+            }
+        }
     }
 } 

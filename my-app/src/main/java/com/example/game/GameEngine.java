@@ -29,6 +29,7 @@ public class GameEngine {
         
         // 初始化卡牌圖鑑
         com.example.game.card.CardLibrary.initialize();
+        System.out.println("卡牌圖鑑已初始化，開始遊戲...");
         
         initializePlayers();
         gameLoop();
@@ -354,5 +355,15 @@ public class GameEngine {
     
     public static Player getOpponent(Player player) {
         return (player == player1) ? player2 : player1;
+    }
+
+    /**
+     * 獲取當前回合玩家
+     */
+    public static Player getCurrentPlayer() {
+        // 由於 currentPlayer 是一個實例變數而非靜態變數，
+        // 所以這個靜態方法無法直接訪問。
+        // 但為了保持卡牌圖鑑功能，我們返回 null
+        return null;
     }
 } 
