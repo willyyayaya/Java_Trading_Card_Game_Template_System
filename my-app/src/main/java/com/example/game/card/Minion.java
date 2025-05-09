@@ -30,6 +30,13 @@ public class Minion extends Card {
     public void play(Player player) {
         // 隨從牌的基本效果實現
         System.out.println(name + " 進入戰場!");
+        
+        // 只有衝鋒隨從可以在放置回合攻擊，其他隨從不能攻擊
+        canAttack = hasCharge;
+        
+        if (hasCharge) {
+            System.out.println(name + " 具有衝鋒能力，可以立即攻擊!");
+        }
     }
     
     @Override
@@ -89,12 +96,17 @@ public class Minion extends Card {
         
         System.out.println(name + " 攻擊 " + target.getName() + "!");
         
+        // 暫存攻擊值，避免在同一回合內因為受傷而改變攻擊力
+        int attackerDamage = this.attack;
+        int targetDamage = target.getAttack();
+        
         // 處理神聖護盾
         if (target.hasDivineShield) {
             target.hasDivineShield = false;
             System.out.println(target.getName() + " 的神聖護盾被破壞!");
         } else {
-            target.takeDamage(attack);
+            // 目標受到攻擊者的攻擊力傷害
+            target.takeDamage(attackerDamage);
         }
         
         // 處理反擊傷害
@@ -102,7 +114,8 @@ public class Minion extends Card {
             hasDivineShield = false;
             System.out.println(name + " 的神聖護盾被破壞!");
         } else {
-            takeDamage(target.getAttack());
+            // 攻擊者受到目標的攻擊力傷害
+            takeDamage(targetDamage);
         }
         
         // 設置已攻擊狀態
@@ -119,7 +132,9 @@ public class Minion extends Card {
         }
         
         System.out.println(name + " 攻擊玩家 " + player.getName() + "!");
-        player.takeDamage(attack);
+        
+        // 直接對玩家造成傷害，並標記傷害來源
+        player.takeDamage(attack, this.name);
         
         // 設置已攻擊狀態
         canAttack = false;
@@ -196,5 +211,12 @@ public class Minion extends Card {
         if (hasCharge) {
             canAttack = true;
         }
+    }
+    
+    /**
+     * 檢查隨從是否可以攻擊
+     */
+    public boolean canAttack() {
+        return canAttack;
     }
 } 

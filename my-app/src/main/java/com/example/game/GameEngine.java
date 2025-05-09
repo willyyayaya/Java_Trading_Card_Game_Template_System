@@ -92,6 +92,11 @@ public class GameEngine {
         
         // 增加可用魔力水晶
         currentPlayer.refreshMana();
+        
+        // 重置所有隨從的攻擊狀態
+        for (Minion minion : currentPlayer.getMinionsOnBoard()) {
+            minion.refreshForNewTurn();
+        }
     }
     
     private void displayGameState() {
@@ -240,6 +245,16 @@ public class GameEngine {
         // 獲取攻擊隨從
         Minion attacker = currentPlayer.getMinionsOnBoard().get(attackerIndex);
         
+        // 檢查隨從是否可以攻擊
+        if (!attacker.canAttack()) {
+            if (turnNumber == 1 || attacker.hasCharge()) {
+                System.out.println(attacker.getName() + " 已經攻擊過，本回合無法再次攻擊!");
+            } else {
+                System.out.println(attacker.getName() + " 剛剛放置到場上，除非有衝鋒效果，否則本回合無法攻擊!");
+            }
+            return;
+        }
+        
         // 獲取對手
         Player opponent = (currentPlayer == player1) ? player2 : player1;
         
@@ -289,10 +304,15 @@ public class GameEngine {
             attacker.attack(target);
             
             // 檢查隨從是否死亡，如果死亡，則從場上移除
+            // 先檢查目標隨從是否死亡
             if (target.getHealth() <= 0) {
+                System.out.println(target.getName() + " 死亡，從場上移除");
                 opponent.getMinionsOnBoard().remove(targetIndex - 1);
             }
+            
+            // 再檢查攻擊隨從是否死亡
             if (attacker.getHealth() <= 0) {
+                System.out.println(attacker.getName() + " 死亡，從場上移除");
                 currentPlayer.getMinionsOnBoard().remove(attackerIndex);
             }
         } else {

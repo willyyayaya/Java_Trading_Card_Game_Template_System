@@ -85,7 +85,8 @@ public class Player {
                 }
                 System.out.println(name + " 打出隨從: " + minion.getName());
                 
-                // 觸發戰吼效果
+                // 觸發隨從的 play 方法和戰吼效果
+                minion.play(this);
                 minion.battlecry();
             } else {
                 System.out.println("場上隨從已滿!");
@@ -109,6 +110,16 @@ public class Player {
     public void takeDamage(int amount) {
         health -= amount;
         System.out.println(name + " 受到 " + amount + " 點傷害，剩餘生命值: " + health);
+    }
+    
+    /**
+     * 受到來源傷害
+     * @param amount 傷害量
+     * @param source 傷害來源
+     */
+    public void takeDamage(int amount, String source) {
+        health -= amount;
+        System.out.println(name + " 受到來自 " + source + " 的 " + amount + " 點傷害，剩餘生命值: " + health);
     }
     
     public void heal(int amount) {
