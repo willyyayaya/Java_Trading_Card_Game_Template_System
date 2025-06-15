@@ -1,11 +1,13 @@
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/GameEngine.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/board/GameBoard.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/card/SpellCard.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/card/Deck.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/card/Minion.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/player/Player.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/card/Rarity.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/App.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/card/Card.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/card/CardLibrary.java
-/Users/willy/Desktop/未命名檔案夾 2/tcg-template/tcg_template/my-app/src/main/java/com/example/game/card/SpellType.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Minion.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\App.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\CardLibrary.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Card.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\Application.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Rarity.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\SpellCard.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\board\GameBoard.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Deck.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\GameEngine.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\SpellType.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\GameController.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\player\Player.java

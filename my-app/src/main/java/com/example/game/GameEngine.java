@@ -1,6 +1,6 @@
 package com.example.game;
 
-import java.util.Scanner;
+import org.springframework.stereotype.Service;
 
 import com.example.game.board.GameBoard;
 import com.example.game.card.Card;
@@ -10,6 +10,7 @@ import com.example.game.player.Player;
 /**
  * 遊戲引擎 - 控制遊戲流程和規則
  */
+@Service
 public class GameEngine {
     private GameBoard gameBoard;
     private static Player player1;
@@ -52,36 +53,14 @@ public class GameEngine {
     }
     
     private void gameLoop() {
-        Scanner scanner = new Scanner(System.in);
-        
+        // Scanner scanner = new Scanner(System.in); // 移除 Scanner
         while (!gameOver) {
             startTurn();
-            
-            while (true) {
-                displayGameState();
-                System.out.println(currentPlayer.getName() + " 的回合。請選擇操作: 1.出牌 2.攻擊 3.結束回合 4.查看卡牌圖鑑");
-                int choice = scanner.nextInt();
-                
-                if (choice == 1) {
-                    playCard();
-                } else if (choice == 2) {
-                    attack();
-                } else if (choice == 3) {
-                    break;
-                } else if (choice == 4) {
-                    // 查看卡牌圖鑑
-                    com.example.game.card.CardLibrary.showLibrary();
-                } else {
-                    System.out.println("無效的選擇，請重新輸入!");
-                }
-            }
-            
-            endTurn();
-            checkGameOver();
+            // 互動邏輯將由 Controller 控制
+            break; // 這裡暫時 break，避免進入無窮迴圈
         }
-        
-        scanner.close();
-        announceWinner();
+        // scanner.close(); // 移除 close
+        // announceWinner(); // 由 Controller 控制
     }
     
     private void startTurn() {
@@ -104,184 +83,66 @@ public class GameEngine {
         gameBoard.displayBoard(player1, player2, currentPlayer);
     }
     
-    private void playCard() {
-        // 實現出牌邏輯
-        System.out.println("選擇要打出的牌:");
+    // playCard 改為 public，並接受 cardIndex, boardPosition, showDetail 參數
+    public String playCard(int cardIndex, Integer boardPosition, boolean showDetail) {
         // 顯示手牌
         currentPlayer.displayHand();
-        
-        // 如果手牌為空，無法出牌
         if (currentPlayer.getHand().isEmpty()) {
-            System.out.println("您沒有手牌可以打出!");
-            return;
+            return "您沒有手牌可以打出!";
         }
-        
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("選項: 1-N.打出對應卡牌  0.取消  -1.查看卡牌詳細資訊");
-        System.out.print("請選擇: ");
-        int choice = scanner.nextInt();
-        
         // 處理查看卡牌詳情的選項
-        if (choice == -1) {
-            System.out.print("輸入想查看詳情的卡牌編號: ");
-            int cardIndex = scanner.nextInt() - 1; // 將輸入的1-based索引轉換為0-based索引
-            
+        if (showDetail) {
             if (cardIndex >= 0 && cardIndex < currentPlayer.getHand().size()) {
                 currentPlayer.displayCardDetails(cardIndex);
-                
-                // 查看完詳情後，讓玩家決定是否打出此卡牌
-                System.out.print("是否打出此卡牌? (1: 是, 0: 否): ");
-                choice = scanner.nextInt();
-                
-                if (choice == 1) {
-                    choice = cardIndex + 1;  // 設置為正確的卡牌索引+1
-                } else {
-                    return; // 返回主選單
-                }
+                // 這裡假設 Controller 會再決定是否打出
+                return "已顯示卡牌詳情";
             } else {
-                System.out.println("無效的卡牌編號!");
-                return;
+                return "無效的卡牌編號!";
             }
         }
-        
         // 選擇要打出的牌
-        int cardIndex = choice - 1; // 將輸入的1-based索引轉換為0-based索引
-        
-        if (cardIndex < -1 || cardIndex >= currentPlayer.getHand().size()) {
-            System.out.println("無效的卡牌編號!");
-            return;
+        if (cardIndex < 0 || cardIndex >= currentPlayer.getHand().size()) {
+            return "無效的卡牌編號!";
         }
-        
-        if (cardIndex == -1) {
-            System.out.println("取消出牌。");
-            return;
-        }
-        
         Card card = currentPlayer.getHand().get(cardIndex);
-        
-        // 檢查魔力是否足夠
         if (card.getManaCost() > currentPlayer.getCurrentMana()) {
-            System.out.println("魔力不足! 這張牌需要 " + card.getManaCost() + " 點魔力，但您只有 " + 
-                            currentPlayer.getCurrentMana() + " 點魔力。");
-            return;
+            return "魔力不足! 這張牌需要 " + card.getManaCost() + " 點魔力，但您只有 " + currentPlayer.getCurrentMana() + " 點魔力。";
         }
-        
-        // 處理不同類型的卡牌
         if (card instanceof Minion) {
-            // 如果是隨從卡，需要選擇放置位置
             if (currentPlayer.getMinionsOnBoard().size() >= 7) {
-                System.out.println("場上隨從已滿(7個)，無法放置更多隨從!");
-                return;
+                return "場上隨從已滿(7個)，無法放置更多隨從!";
             }
-            
-            int boardPosition = 0;
-            
-            if (currentPlayer.getMinionsOnBoard().size() > 0) {
-                System.out.println("當前場上隨從:");
-                currentPlayer.displayMinions();
-                System.out.print("選擇放置位置(1-" + (currentPlayer.getMinionsOnBoard().size() + 1) + 
-                                ", 輸入0放在最右邊): ");
-                boardPosition = scanner.nextInt();
-                
-                if (boardPosition < 0 || boardPosition > currentPlayer.getMinionsOnBoard().size() + 1) {
-                    System.out.println("無效的位置，放置在最右邊。");
-                    boardPosition = 0;
-                }
-                
-                if (boardPosition > 0) {
-                    boardPosition--; // 將1-based索引轉換為0-based索引
-                }
+            int pos = (boardPosition == null) ? 0 : boardPosition;
+            if (pos < 0 || pos > currentPlayer.getMinionsOnBoard().size()) {
+                pos = 0;
             }
-            
-            // 調用Player類的playCard方法處理隨從的放置
-            currentPlayer.playCard(cardIndex, boardPosition);
-            
+            currentPlayer.playCard(cardIndex, pos);
+            return "已打出隨從卡";
         } else {
-            // 如果是法術卡，可能需要選擇目標
-            // 這裡使用簡化的邏輯，直接打出法術卡
-            System.out.println(currentPlayer.getName() + " 施放法術: " + card.getName());
-            
-            // 消耗魔力
             currentPlayer.setCurrentMana(currentPlayer.getCurrentMana() - card.getManaCost());
-            
-            // 從手牌中移除
             Card removedCard = currentPlayer.getHand().remove(cardIndex);
-            
-            // 執行卡牌效果
             removedCard.play(currentPlayer);
+            return currentPlayer.getName() + " 施放法術: " + card.getName();
         }
     }
     
-    private void attack() {
-        // 實現攻擊邏輯
-        System.out.println("選擇攻擊單位和目標:");
-        
-        // 檢查是否有隨從可以攻擊
+    // attack 改為 public，並接受 attackerIndex, targetIndex 參數
+    public String attack(int attackerIndex, int targetIndex) {
         if (currentPlayer.getMinionsOnBoard().isEmpty()) {
-            System.out.println("您沒有隨從可以進行攻擊!");
-            return;
+            return "您沒有隨從可以進行攻擊!";
         }
-        
-        // 顯示場上的隨從
-        System.out.println("您的隨從:");
-        gameBoard.displayMinions(currentPlayer);
-        
-        Scanner scanner = new Scanner(System.in);
-        
-        // 選擇攻擊隨從
-        System.out.print("選擇進行攻擊的隨從編號(輸入0取消): ");
-        int attackerIndex = scanner.nextInt() - 1; // 將輸入的1-based索引轉換為0-based索引
-        
-        if (attackerIndex < -1 || attackerIndex >= currentPlayer.getMinionsOnBoard().size()) {
-            System.out.println("無效的隨從編號!");
-            return;
+        if (attackerIndex < 0 || attackerIndex >= currentPlayer.getMinionsOnBoard().size()) {
+            return "無效的隨從編號!";
         }
-        
-        if (attackerIndex == -1) {
-            System.out.println("取消攻擊。");
-            return;
-        }
-        
-        // 獲取攻擊隨從
         Minion attacker = currentPlayer.getMinionsOnBoard().get(attackerIndex);
-        
-        // 檢查隨從是否可以攻擊
         if (!attacker.canAttack()) {
             if (turnNumber == 1 || attacker.hasCharge()) {
-                System.out.println(attacker.getName() + " 已經攻擊過，本回合無法再次攻擊!");
+                return attacker.getName() + " 已經攻擊過，本回合無法再次攻擊!";
             } else {
-                System.out.println(attacker.getName() + " 剛剛放置到場上，除非有衝鋒效果，否則本回合無法攻擊!");
+                return attacker.getName() + " 剛剛放置到場上，除非有衝鋒效果，否則本回合無法攻擊!";
             }
-            return;
         }
-        
-        // 獲取對手
         Player opponent = (currentPlayer == player1) ? player2 : player1;
-        
-        // 選擇攻擊目標
-        System.out.println("選擇攻擊目標:");
-        System.out.println("0. 對手英雄: " + opponent.getName() + " (" + opponent.getHealth() + " 生命值)");
-        
-        // 顯示對手場上的隨從
-        System.out.println("對手場上的隨從:");
-        if (opponent.getMinionsOnBoard().isEmpty()) {
-            System.out.println("  (無)");
-        } else {
-            for (int i = 0; i < opponent.getMinionsOnBoard().size(); i++) {
-                Minion minion = opponent.getMinionsOnBoard().get(i);
-                System.out.println((i+1) + ". " + minion.getName() + 
-                        " [攻擊力:" + minion.getAttack() + 
-                        ", 生命值:" + minion.getHealth() + "]" +
-                        (minion.hasTaunt() ? " (嘲諷)" : "") +
-                        (minion.hasDivineShield() ? " (聖盾)" : ""));
-            }
-        }
-        
-        System.out.print("選擇攻擊目標編號: ");
-        int targetIndex = scanner.nextInt();
-        
-        // 檢查是否有嘲諷隨從，若有，必須優先攻擊嘲諷隨從
         boolean hasTaunt = false;
         for (Minion minion : opponent.getMinionsOnBoard()) {
             if (minion.hasTaunt()) {
@@ -289,35 +150,27 @@ public class GameEngine {
                 break;
             }
         }
-        
         if (hasTaunt && (targetIndex == 0 || !opponent.getMinionsOnBoard().get(targetIndex-1).hasTaunt())) {
-            System.out.println("必須優先攻擊具有嘲諷的隨從!");
-            return;
+            return "必須優先攻擊具有嘲諷的隨從!";
         }
-        
-        // 執行攻擊
         if (targetIndex == 0) {
-            // 攻擊英雄
             attacker.attackPlayer(opponent);
+            return attacker.getName() + " 攻擊了對手英雄!";
         } else if (targetIndex > 0 && targetIndex <= opponent.getMinionsOnBoard().size()) {
-            // 攻擊隨從
             Minion target = opponent.getMinionsOnBoard().get(targetIndex - 1);
             attacker.attack(target);
-            
-            // 檢查隨從是否死亡，如果死亡，則從場上移除
-            // 先檢查目標隨從是否死亡
+            String result = attacker.getName() + " 攻擊了 " + target.getName();
             if (target.getHealth() <= 0) {
-                System.out.println(target.getName() + " 死亡，從場上移除");
                 opponent.getMinionsOnBoard().remove(targetIndex - 1);
+                result += ", " + target.getName() + " 死亡";
             }
-            
-            // 再檢查攻擊隨從是否死亡
             if (attacker.getHealth() <= 0) {
-                System.out.println(attacker.getName() + " 死亡，從場上移除");
                 currentPlayer.getMinionsOnBoard().remove(attackerIndex);
+                result += ", " + attacker.getName() + " 死亡";
             }
+            return result;
         } else {
-            System.out.println("無效的目標編號!");
+            return "無效的目標編號!";
         }
     }
     
@@ -365,5 +218,17 @@ public class GameEngine {
         // 所以這個靜態方法無法直接訪問。
         // 但為了保持卡牌圖鑑功能，我們返回 null
         return null;
+    }
+
+    // 回傳目前遊戲狀態（簡單字串版）
+    public String getGameState() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("回合: ").append(turnNumber).append("\n");
+        sb.append("目前玩家: ").append(currentPlayer.getName()).append("\n");
+        sb.append(player1.getName()).append(" 生命: ").append(player1.getHealth()).append(" 魔力: ").append(player1.getCurrentMana()).append("\n");
+        sb.append(player2.getName()).append(" 生命: ").append(player2.getHealth()).append(" 魔力: ").append(player2.getCurrentMana()).append("\n");
+        sb.append("手牌: ").append(currentPlayer.getHand().size()).append(" 張\n");
+        sb.append("場上隨從: ").append(currentPlayer.getMinionsOnBoard().size()).append(" 個\n");
+        return sb.toString();
     }
 } 
