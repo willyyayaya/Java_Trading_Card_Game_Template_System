@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCG卡牌遊戲</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .game-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        input {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        #gameId {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+        }
+        #output {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .game-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 TCG卡牌遊戲 🎮</h1>
+        
+        <div class="game-section">
+            <h2>創建遊戲</h2>
+            <div class="form-group">
+                <label>玩家1名稱:</label>
+                <input type="text" id="player1" placeholder="輸入玩家1名稱" value="張三">
+            </div>
+            <div class="form-group">
+                <label>玩家2名稱:</label>
+                <input type="text" id="player2" placeholder="輸入玩家2名稱" value="李四">
+            </div>
+            <button onclick="createGame()">創建遊戲</button>
+        </div>
+
+        <div class="game-section">
+            <h2>遊戲控制</h2>
+            <div class="form-group">
+                <label>遊戲ID:</label>
+                <input type="text" id="gameId" placeholder="遊戲ID會在創建遊戲後自動填入">
+            </div>
+            
+            <div class="game-controls">
+                <button onclick="getGameState()">獲取遊戲狀態</button>
+                <button onclick="endTurn()">結束回合</button>
+                <button onclick="playCard()">打出卡牌 (索引0)</button>
+                <button onclick="attack()">攻擊 (隨從0→對手)</button>
+                <button onclick="deleteGame()">刪除遊戲</button>
+            </div>
+        </div>
+
+        <div class="game-section">
+            <h2>遊戲輸出</h2>
+            <div id="output">遊戲輸出會顯示在這裡...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/tcg/game';
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.textContent += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function createGame() {
+            const player1 = document.getElementById('player1').value;
+            const player2 = document.getElementById('player2').value;
+            
+            if (!player1 || !player2) {
+                log('❌ 請輸入玩家名稱');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/create?player1Name=${encodeURIComponent(player1)}&player2Name=${encodeURIComponent(player2)}`, {
+                    method: 'POST'
+                });
+                const result = await response.text();
+                log(`✅ ${result}`);
+                
+                // 提取遊戲ID
+                const gameIdMatch = result.match(/遊戲ID: (.+)/);
+                if (gameIdMatch) {
+                    document.getElementById('gameId').value = gameIdMatch[1];
+                }
+            } catch (error) {
+                log(`❌ 錯誤: ${error.message}`);
+            }
+        }
+
+        async function getGameState() {
+            const gameId = document.getElementById('gameId').value;
+            if (!gameId) {
+                log('❌ 請先創建遊戲或輸入遊戲ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${gameId}/state`);
+                const result = await response.text();
+                log(`📊 遊戲狀態:\n${result}`);
+            } catch (error) {
+                log(`❌ 錯誤: ${error.message}`);
+            }
+        }
+
+        async function endTurn() {
+            const gameId = document.getElementById('gameId').value;
+            if (!gameId) {
+                log('❌ 請先創建遊戲或輸入遊戲ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${gameId}/endTurn`, {
+                    method: 'POST'
+                });
+                const result = await response.text();
+                log(`🔄 ${result}`);
+            } catch (error) {
+                log(`❌ 錯誤: ${error.message}`);
+            }
+        }
+
+        async function playCard() {
+            const gameId = document.getElementById('gameId').value;
+            if (!gameId) {
+                log('❌ 請先創建遊戲或輸入遊戲ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${gameId}/playCard?cardIndex=0&boardPosition=0`, {
+                    method: 'POST'
+                });
+                const result = await response.text();
+                log(`🃏 ${result}`);
+            } catch (error) {
+                log(`❌ 錯誤: ${error.message}`);
+            }
+        }
+
+        async function attack() {
+            const gameId = document.getElementById('gameId').value;
+            if (!gameId) {
+                log('❌ 請先創建遊戲或輸入遊戲ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${gameId}/attack?attackerIndex=0&targetIndex=0`, {
+                    method: 'POST'
+                });
+                const result = await response.text();
+                log(`⚔️ ${result}`);
+            } catch (error) {
+                log(`❌ 錯誤: ${error.message}`);
+            }
+        }
+
+        async function deleteGame() {
+            const gameId = document.getElementById('gameId').value;
+            if (!gameId) {
+                log('❌ 請先創建遊戲或輸入遊戲ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${gameId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.text();
+                log(`🗑️ ${result}`);
+                document.getElementById('gameId').value = '';
+            } catch (error) {
+                log(`❌ 錯誤: ${error.message}`);
+            }
+        }
+
+        // 初始化日誌
+        log('🎮 TCG卡牌遊戲系統已啟動');
+        log('📝 請先創建遊戲來開始');
+    </script>
+</body>
+</html> 

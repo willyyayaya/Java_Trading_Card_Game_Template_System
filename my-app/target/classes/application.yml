@@ -1,0 +1,20 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /tcg
+
+spring:
+  application:
+    name: tcg-card-game
+  
+  # 日誌配置
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    com.example.game: DEBUG
+    org.springframework: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" 

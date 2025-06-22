@@ -1,10 +1,12 @@
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Minion.java
-C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\App.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\CardLibrary.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\service\GameService.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Card.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\Application.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\service\GameEngineFactory.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Rarity.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\SpellCard.java
+C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\model\GameSession.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\board\GameBoard.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\card\Deck.java
 C:\Users\USER\Desktop\side_project\tcg_template\tcg_template\my-app\src\main\java\com\example\game\GameEngine.java

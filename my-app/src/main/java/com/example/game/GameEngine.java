@@ -1,6 +1,6 @@
 package com.example.game;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.example.game.board.GameBoard;
 import com.example.game.card.Card;
@@ -10,11 +10,11 @@ import com.example.game.player.Player;
 /**
  * 遊戲引擎 - 控制遊戲流程和規則
  */
-@Service
+@Component
 public class GameEngine {
     private GameBoard gameBoard;
-    private static Player player1;
-    private static Player player2;
+    private Player player1;
+    private Player player2;
     private Player currentPlayer;
     private int turnNumber;
     private boolean gameOver;
@@ -25,6 +25,17 @@ public class GameEngine {
         this.turnNumber = 1;
     }
     
+    /**
+     * 初始化遊戲
+     */
+    public void initializeGame(String player1Name, String player2Name) {
+        // 初始化卡牌圖鑑
+        com.example.game.card.CardLibrary.initialize();
+        System.out.println("卡牌圖鑑已初始化，開始遊戲...");
+        
+        initializePlayers(player1Name, player2Name);
+    }
+    
     public void start() {
         System.out.println("歡迎來到卡牌遊戲!");
         
@@ -32,14 +43,14 @@ public class GameEngine {
         com.example.game.card.CardLibrary.initialize();
         System.out.println("卡牌圖鑑已初始化，開始遊戲...");
         
-        initializePlayers();
+        initializePlayers("玩家1", "玩家2");
         gameLoop();
     }
     
-    private void initializePlayers() {
-        // 簡單模擬，實際上會讀取玩家數據或讓玩家選擇牌組
-        player1 = new Player("玩家1");
-        player2 = new Player("玩家2");
+    private void initializePlayers(String player1Name, String player2Name) {
+        // 初始化玩家
+        player1 = new Player(player1Name);
+        player2 = new Player(player2Name);
         
         player1.initializeDeck();
         player2.initializeDeck();
@@ -50,6 +61,8 @@ public class GameEngine {
         // 隨機決定先手
         currentPlayer = Math.random() > 0.5 ? player1 : player2;
         System.out.println(currentPlayer.getName() + " 將先手進行遊戲");
+        
+        startTurn();
     }
     
     private void gameLoop() {
@@ -174,7 +187,7 @@ public class GameEngine {
         }
     }
     
-    private void endTurn() {
+    public String endTurn() {
         System.out.println(currentPlayer.getName() + " 的回合結束");
         
         // 切換當前玩家
@@ -184,6 +197,11 @@ public class GameEngine {
         if (currentPlayer == player1) {
             turnNumber++;
         }
+        
+        startTurn();
+        checkGameOver();
+        
+        return currentPlayer.getName() + " 的回合開始";
     }
     
     private void checkGameOver() {
@@ -197,29 +215,6 @@ public class GameEngine {
         System.out.println("遊戲結束! " + winner.getName() + " 獲勝!");
     }
     
-    // 靜態方法用於獲取玩家，供其他類使用
-    public static Player getPlayer1() {
-        return player1;
-    }
-    
-    public static Player getPlayer2() {
-        return player2;
-    }
-    
-    public static Player getOpponent(Player player) {
-        return (player == player1) ? player2 : player1;
-    }
-
-    /**
-     * 獲取當前回合玩家
-     */
-    public static Player getCurrentPlayer() {
-        // 由於 currentPlayer 是一個實例變數而非靜態變數，
-        // 所以這個靜態方法無法直接訪問。
-        // 但為了保持卡牌圖鑑功能，我們返回 null
-        return null;
-    }
-
     // 回傳目前遊戲狀態（簡單字串版）
     public String getGameState() {
         StringBuilder sb = new StringBuilder();
@@ -230,5 +225,26 @@ public class GameEngine {
         sb.append("手牌: ").append(currentPlayer.getHand().size()).append(" 張\n");
         sb.append("場上隨從: ").append(currentPlayer.getMinionsOnBoard().size()).append(" 個\n");
         return sb.toString();
+    }
+    
+    // 新增的getter方法供其他類使用
+    public Player getPlayer1() {
+        return player1;
+    }
+    
+    public Player getPlayer2() {
+        return player2;
+    }
+    
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+    
+    public Player getOpponent(Player player) {
+        return (player == player1) ? player2 : player1;
+    }
+    
+    public boolean isGameOver() {
+        return gameOver;
     }
 } 

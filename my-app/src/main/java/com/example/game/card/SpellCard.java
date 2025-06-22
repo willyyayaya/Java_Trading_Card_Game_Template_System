@@ -3,7 +3,6 @@ package com.example.game.card;
 import java.util.List;
 import java.util.Random;
 
-import com.example.game.GameEngine;
 import com.example.game.player.Player;
 
 /**
@@ -57,24 +56,8 @@ public class SpellCard extends Card {
     // 各種法術效果的實現
     private void applyDamage(Player player) {
         System.out.println("造成 " + value + " 點傷害");
-        // 這裡需要選擇目標，簡化處理
-        Random random = new Random();
-        if (random.nextBoolean()) {
-            // 傷害敵方英雄
-            Player opponent = (player == GameEngine.getPlayer1()) ? 
-                    GameEngine.getPlayer2() : GameEngine.getPlayer1();
-            opponent.takeDamage(value);
-        } else if (!GameEngine.getOpponent(player).getMinionsOnBoard().isEmpty()) {
-            // 傷害敵方隨從
-            List<Minion> opponentMinions = GameEngine.getOpponent(player).getMinionsOnBoard();
-            int targetIndex = random.nextInt(opponentMinions.size());
-            opponentMinions.get(targetIndex).takeDamage(value);
-        } else {
-            // 沒有目標，傷害敵方英雄
-            Player opponent = (player == GameEngine.getPlayer1()) ? 
-                    GameEngine.getPlayer2() : GameEngine.getPlayer1();
-            opponent.takeDamage(value);
-        }
+        // TODO: 重構後實現目標選擇功能
+        System.out.println("法術效果暫時禁用，需要重構為Spring服務");
     }
     
     private void applyHealing(Player player) {
@@ -101,10 +84,8 @@ public class SpellCard extends Card {
     
     private void applyAOE(Player player) {
         System.out.println("對所有敵方隨從造成 " + value + " 點傷害");
-        Player opponent = GameEngine.getOpponent(player);
-        for (Minion minion : opponent.getMinionsOnBoard()) {
-            minion.takeDamage(value);
-        }
+        // TODO: 重構後實現範圍攻擊功能
+        System.out.println("AOE法術效果暫時禁用，需要重構為Spring服務");
     }
     
     private void applyBuff(Player player) {
@@ -123,34 +104,14 @@ public class SpellCard extends Card {
     
     private void applyDebuff(Player player) {
         System.out.println("使一個敵方隨從獲得-" + value + "/-" + value);
-        Player opponent = GameEngine.getOpponent(player);
-        if (!opponent.getMinionsOnBoard().isEmpty()) {
-            Random random = new Random();
-            List<Minion> minions = opponent.getMinionsOnBoard();
-            int targetIndex = random.nextInt(minions.size());
-            Minion target = minions.get(targetIndex);
-            target.setAttack(Math.max(0, target.getAttack() - value)); // 最小為0
-            target.takeDamage(value);
-            System.out.println(target.getName() + " 受到減益，現在是 " + 
-                    target.getAttack() + "/" + target.getHealth());
-        }
+        // TODO: 重構後實現減益功能
+        System.out.println("減益法術效果暫時禁用，需要重構為Spring服務");
     }
     
     private void applyTransform(Player player) {
         System.out.println("變形法術效果");
-        // 變形效果較為複雜，簡化處理
-        Player opponent = GameEngine.getOpponent(player);
-        if (!opponent.getMinionsOnBoard().isEmpty()) {
-            Random random = new Random();
-            List<Minion> minions = opponent.getMinionsOnBoard();
-            int targetIndex = random.nextInt(minions.size());
-            Minion target = minions.get(targetIndex);
-            
-            // 變成一個1/1的綿羊
-            target.setAttack(1);
-            target.setHealth(1);
-            System.out.println(target.getName() + " 被變形為1/1的綿羊");
-        }
+        // TODO: 重構後實現變形功能
+        System.out.println("變形法術效果暫時禁用，需要重構為Spring服務");
     }
     
     private void applySummon(Player player) {

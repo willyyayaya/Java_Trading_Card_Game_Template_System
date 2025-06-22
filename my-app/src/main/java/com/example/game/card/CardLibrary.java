@@ -274,37 +274,9 @@ public class CardLibrary {
      * 查看場上隨從詳情
      */
     private static void showBattlefieldMinions() {
-        Scanner scanner = new Scanner(System.in);
-        
-        // 獲取當前遊戲雙方玩家
-        com.example.game.player.Player player1 = com.example.game.GameEngine.getPlayer1();
-        com.example.game.player.Player player2 = com.example.game.GameEngine.getPlayer2();
-        
-        if (player1 == null || player2 == null) {
-            System.out.println("遊戲尚未開始或無法獲取玩家信息");
-            return;
-        }
-        
-        while (true) {
-            System.out.println("\n======= 場上隨從詳情 =======");
-            System.out.println("1. 查看 " + player1.getName() + " 的場上隨從");
-            System.out.println("2. 查看 " + player2.getName() + " 的場上隨從");
-            System.out.println("0. 返回");
-            System.out.print("請選擇: ");
-            
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // 清除輸入緩衝
-            
-            if (choice == 0) {
-                return;
-            } else if (choice == 1) {
-                showPlayerMinions(player1);
-            } else if (choice == 2) {
-                showPlayerMinions(player2);
-            } else {
-                System.out.println("無效的選擇!");
-            }
-        }
+        // TODO: 重構為Spring服務後再實現此功能
+        System.out.println("此功能需要重構為Spring服務後才能使用");
+        return;
     }
     
     /**
@@ -416,39 +388,9 @@ public class CardLibrary {
      * 查看玩家手牌
      */
     private static void showPlayerHands() {
-        Scanner scanner = new Scanner(System.in);
-        
-        // 獲取當前遊戲中的玩家
-        com.example.game.player.Player player1 = com.example.game.GameEngine.getPlayer1();
-        com.example.game.player.Player player2 = com.example.game.GameEngine.getPlayer2();
-        
-        if (player1 == null || player2 == null) {
-            System.out.println("遊戲尚未開始或無法獲取玩家信息");
-            return;
-        }
-        
-        while (true) {
-            System.out.println("\n======= 玩家手牌 =======");
-            
-            // 顯示雙方玩家選項
-            System.out.println("1. 查看 " + player1.getName() + " 的手牌");
-            System.out.println("2. 查看 " + player2.getName() + " 的手牌");
-            System.out.println("0. 返回");
-            System.out.print("請選擇: ");
-            
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // 清除輸入緩衝
-            
-            if (choice == 0) {
-                return;
-            } else if (choice == 1) {
-                showPlayerCards(player1);
-            } else if (choice == 2) {
-                showPlayerCards(player2);
-            } else {
-                System.out.println("無效的選擇!");
-            }
-        }
+        // TODO: 重構為Spring服務後再實現此功能
+        System.out.println("此功能需要重構為Spring服務後才能使用");
+        return;
     }
     
     /**

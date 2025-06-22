@@ -1,5 +1,6 @@
 com\example\game\player\Player.class
 com\example\game\card\Deck.class
+com\example\game\service\GameEngineFactory.class
 com\example\game\card\SpellCard.class
 com\example\game\Application.class
 com\example\game\card\CardLibrary.class
@@ -7,10 +8,11 @@ com\example\game\GameEngine.class
 com\example\game\card\Minion.class
 com\example\game\card\Card$1.class
 com\example\game\GameController.class
-com\example\App.class
+com\example\game\model\GameSession.class
 com\example\game\card\SpellCard$1.class
 com\example\game\card\SpellType.class
 com\example\game\card\CardLibrary$1.class
 com\example\game\card\Rarity.class
+com\example\game\service\GameService.class
 com\example\game\card\Card.class
 com\example\game\board\GameBoard.class
