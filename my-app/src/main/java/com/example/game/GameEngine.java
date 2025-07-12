@@ -96,7 +96,109 @@ public class GameEngine {
     }
     
     private void displayGameState() {
+        System.out.println("\n=============== 遊戲狀態 ===============");
+        System.out.println("回合: " + turnNumber);
+        System.out.println("當前玩家: " + currentPlayer.getName());
+        System.out.println("========================================");
+        
+        // 顯示兩位玩家的基本資訊
+        displayPlayerInfo(player1);
+        displayPlayerInfo(player2);
+        
+        // 顯示遊戲板狀態
         gameBoard.displayBoard(player1, player2, currentPlayer);
+        
+        // 顯示當前玩家的手牌數量
+        System.out.println("\n" + currentPlayer.getName() + " 的手牌: " + currentPlayer.getHand().size() + " 張");
+        
+        System.out.println("========================================\n");
+    }
+    
+    /**
+     * 顯示玩家資訊
+     */
+    private void displayPlayerInfo(Player player) {
+        String indicator = (player == currentPlayer) ? " ◄" : "";
+        System.out.printf("%-10s 生命: %2d | 魔力: %d | 場上隨從: %d%s\n", 
+            player.getName(), 
+            player.getHealth(), 
+            player.getCurrentMana(),
+            player.getMinionsOnBoard().size(),
+            indicator);
+    }
+    
+    /**
+     * 公開方法：獲取詳細的遊戲狀態資訊
+     * @return 包含完整遊戲狀態的字串
+     */
+    public String getDetailedGameState() {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("=============== 遊戲狀態 ===============\n");
+        sb.append("回合: ").append(turnNumber).append("\n");
+        sb.append("當前玩家: ").append(currentPlayer.getName()).append("\n");
+        sb.append("========================================\n");
+        
+        // 玩家詳細資訊
+        sb.append(getPlayerDetailInfo(player1));
+        sb.append(getPlayerDetailInfo(player2));
+        
+        // 當前玩家手牌資訊
+        sb.append("\n").append(currentPlayer.getName()).append(" 的手牌: ").append(currentPlayer.getHand().size()).append(" 張\n");
+        
+        // 場上隨從詳情
+        sb.append("\n--- 場上隨從 ---\n");
+        sb.append(player1.getName()).append(" 的隨從: ");
+        if (player1.getMinionsOnBoard().isEmpty()) {
+            sb.append("無\n");
+        } else {
+            sb.append("\n");
+            for (int i = 0; i < player1.getMinionsOnBoard().size(); i++) {
+                Minion minion = player1.getMinionsOnBoard().get(i);
+                sb.append("  ").append(i + 1).append(". ").append(minion.getName())
+                  .append(" [").append(minion.getAttack()).append("/").append(minion.getHealth()).append("]");
+                if (minion.hasTaunt()) sb.append(" 嘲諷");
+                if (minion.hasDivineShield()) sb.append(" 聖盾");
+                if (minion.hasCharge()) sb.append(" 衝鋒");
+                if (!minion.canAttack()) sb.append(" (已攻擊)");
+                sb.append("\n");
+            }
+        }
+        
+        sb.append(player2.getName()).append(" 的隨從: ");
+        if (player2.getMinionsOnBoard().isEmpty()) {
+            sb.append("無\n");
+        } else {
+            sb.append("\n");
+            for (int i = 0; i < player2.getMinionsOnBoard().size(); i++) {
+                Minion minion = player2.getMinionsOnBoard().get(i);
+                sb.append("  ").append(i + 1).append(". ").append(minion.getName())
+                  .append(" [").append(minion.getAttack()).append("/").append(minion.getHealth()).append("]");
+                if (minion.hasTaunt()) sb.append(" 嘲諷");
+                if (minion.hasDivineShield()) sb.append(" 聖盾");
+                if (minion.hasCharge()) sb.append(" 衝鋒");
+                if (!minion.canAttack()) sb.append(" (已攻擊)");
+                sb.append("\n");
+            }
+        }
+        
+        sb.append("========================================\n");
+        
+        return sb.toString();
+    }
+    
+    /**
+     * 獲取玩家詳細資訊
+     */
+    private String getPlayerDetailInfo(Player player) {
+        String indicator = (player == currentPlayer) ? " ◄" : "";
+        return String.format("%-10s 生命: %2d | 魔力: %d | 場上隨從: %d | 手牌: %d%s\n", 
+            player.getName(), 
+            player.getHealth(), 
+            player.getCurrentMana(),
+            player.getMinionsOnBoard().size(),
+            player.getHand().size(),
+            indicator);
     }
     
     // playCard 改為 public，並接受 cardIndex, boardPosition, showDetail 參數
