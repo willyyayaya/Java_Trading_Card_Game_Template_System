@@ -13,6 +13,7 @@ public class CardLibrary {
     private static Map<String, Card> allCards = new HashMap<>();
     private static List<Minion> allMinions = new ArrayList<>();
     private static List<SpellCard> allSpells = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
     
     /**
      * 初始化卡牌圖鑑
@@ -111,7 +112,6 @@ public class CardLibrary {
      * 顯示卡牌圖鑑介面
      */
     public static void showLibrary() {
-        Scanner scanner = new Scanner(System.in);
         
         while (true) {
             System.out.println("\n======= 卡牌圖鑑 =======");
@@ -136,7 +136,7 @@ public class CardLibrary {
                     browseSpells();
                     break;
                 case 3:
-                    searchCard(scanner);
+                    searchCard();
                     break;
                 case 4:
                     showBattlefieldMinions();
@@ -154,7 +154,6 @@ public class CardLibrary {
      * 瀏覽所有隨從卡
      */
     private static void browseMinions() {
-        Scanner scanner = new Scanner(System.in);
         
         while (true) {
             System.out.println("\n隨從卡列表 (共 " + allMinions.size() + " 張):");
@@ -188,7 +187,6 @@ public class CardLibrary {
      * 瀏覽所有法術卡
      */
     private static void browseSpells() {
-        Scanner scanner = new Scanner(System.in);
         
         while (true) {
             System.out.println("\n法術卡列表 (共 " + allSpells.size() + " 張):");
@@ -220,7 +218,7 @@ public class CardLibrary {
     /**
      * 搜尋卡牌
      */
-    private static void searchCard(Scanner scanner) {
+    private static void searchCard() {
         System.out.print("請輸入卡牌名稱關鍵字: ");
         String keyword = scanner.nextLine().trim();
         
@@ -283,7 +281,6 @@ public class CardLibrary {
      * 顯示玩家場上隨從的詳細信息
      */
     private static void showPlayerMinions(com.example.game.player.Player player) {
-        Scanner scanner = new Scanner(System.in);
         List<Minion> minions = player.getMinionsOnBoard();
         
         if (minions.isEmpty()) {
@@ -397,7 +394,6 @@ public class CardLibrary {
      * 顯示玩家手牌的詳細信息
      */
     private static void showPlayerCards(com.example.game.player.Player player) {
-        Scanner scanner = new Scanner(System.in);
         List<Card> cards = player.getHand();
         
         if (cards.isEmpty()) {
