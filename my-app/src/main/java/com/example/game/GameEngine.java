@@ -73,7 +73,10 @@ public class GameEngine {
             break; // 這裡暫時 break，避免進入無窮迴圈
         }
         // scanner.close(); // 移除 close
-        // announceWinner(); // 由 Controller 控制
+        
+        if (gameOver) {
+            announceWinner();
+        }
     }
     
     private void startTurn() {
@@ -207,6 +210,7 @@ public class GameEngine {
     private void checkGameOver() {
         if (player1.getHealth() <= 0 || player2.getHealth() <= 0) {
             gameOver = true;
+            announceWinner();
         }
     }
     
@@ -246,5 +250,28 @@ public class GameEngine {
     
     public boolean isGameOver() {
         return gameOver;
+    }
+    
+    /**
+     * 獲取遊戲獲勝者
+     * @return 獲勝的玩家，如果遊戲尚未結束則返回 null
+     */
+    public Player getWinner() {
+        if (!gameOver) {
+            return null;
+        }
+        return (player1.getHealth() <= 0) ? player2 : player1;
+    }
+    
+    /**
+     * 獲取遊戲結果訊息
+     * @return 遊戲結果的字串描述
+     */
+    public String getGameResult() {
+        if (!gameOver) {
+            return "遊戲進行中...";
+        }
+        Player winner = getWinner();
+        return "遊戲結束! " + winner.getName() + " 獲勝!";
     }
 } 
